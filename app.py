@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for
 from pymongo import MongoClient
 from bson.objectid import ObjectId
+from datetime import datetime
 import os
 
 host = os.environ.get('MONGODB_URI', 'mongodb://localhost:27017/Playlister')
@@ -26,7 +27,8 @@ def playlists_new():
 def playlists_show(playlist_id):
     """Show a single playlist."""
     playlist = playlists.find_one({'_id': ObjectId(playlist_id)})
-    return render_template('playlists_show.html', playlist=playlist)
+    playlist_comments = comments.find({'playlist_id': ObjectId(playlist_id)})
+    return render_template('playlists_show.html', playlist=playlist, comments=playlist_comments)
 
 @app.route('/playlists', methods=['POST'])
 def playlists_submit():
@@ -35,7 +37,9 @@ def playlists_submit():
         'title': request.form.get('title'),
         'description': request.form.get('description'),
         'video': request.form.get('videos').split(),
+        'created_at': datetime.now(),
     }
+    print(playlist)
     playlist_id = playlists.insert_one(playlist).inserted_id
     return redirect(url_for('playlists_show', playlist_id=playlist_id))
 
@@ -76,13 +80,6 @@ def comments_new():
     print(comment)
     comment_id = comments.insert_one(comment).inserted_id
     return redirect(url_for('playlists_show', playlist_id=request.form.get('playlist_id')))
-
-@app.route('/playlists/<playlist_id>')
-def playlists_show(playlist_id):
-    """Show a single playlist."""
-    playlist = playlists.find_one({'_id': ObjectId(playlist_id)})
-    playlist_comments = comments.find({'playlist_id': ObjectId(playlist_id)})
-    return render_template('playlists_show.html', playlist=playlist, comments=playlist_comments)
 
 @app.route('/playlists/comments/<comment_id>', methods=['POST'])
 def comments_delete(comment_id):
