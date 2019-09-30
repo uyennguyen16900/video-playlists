@@ -5,7 +5,7 @@ from bson.objectid import ObjectId
 sample_playlist_id = ObjectId('5d55cffc4a3d4031f42827a3')
 sample_playlist = {
     'title': 'Cat Video',
-    'description': 'cats acting weird',
+    'description': 'Cats acting weird',
     'videos': [
         'https://youtube.com/embed/hY7m5jjJ9mM',
         'https://www.youtube.com/embed/CQ85sUNBK7w'
@@ -31,7 +31,7 @@ class PlaylistsTests(TestCase):
 
     def test_index(self):
         """Test the playlists homepage."""
-        result= self.client.get('/')
+        result = self.client.get('/')
         self.assertEqual(result.status, '200 OK')
         self.assertIn(b'Playlist', result.data)
 
