@@ -36,7 +36,7 @@ def playlists_submit():
     playlist = {
         'title': request.form.get('title'),
         'description': request.form.get('description'),
-        'video': request.form.get('videos').split(),
+        'videos': request.form.get('videos').split(),
         'created_at': datetime.now(),
     }
     print(playlist)
@@ -79,7 +79,8 @@ def comments_new():
     }
     print(comment)
     comment_id = comments.insert_one(comment).inserted_id
-    return redirect(url_for('playlists_show', playlist_id=request.form.get('playlist_id')))
+    # return redirect(url_for('playlists_show', playlist_id=request.form.get('playlist_id')))
+    return redirect(url_for('playlists_show', comment_id=comment_id))
 
 @app.route('/playlists/comments/<comment_id>', methods=['POST'])
 def comments_delete(comment_id):
